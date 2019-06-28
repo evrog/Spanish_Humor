@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 import tensorflow as tf
@@ -27,7 +27,7 @@ import copy
 import tensorflow.keras.backend as K
 
 
-# In[ ]:
+# In[2]:
 
 
 import numpy as  np
@@ -43,9 +43,9 @@ word2vec = r"C:\Users\Annie\Documents\Working\Spanish jokes\SBW-vectors-300-min5
 train=r"C:\Users\Annie\Documents\Working\Spanish jokes\data\haha_2019_train_preprocessed_lemmatized.csv"
 test=r"C:\Users\Annie\Documents\Working\Spanish jokes\data\haha_2019_test_preprocessed_lemmatized.csv"
 
-lda_train=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\lda+pos_neg\train.csv"
-lda_test=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\lda+pos_neg\test.csv"
-lda_ev=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\lda+pos_neg\ev.csv"
+lda_train=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\lda\train.csv"
+lda_test=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\lda\test.csv"
+lda_ev=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\lda\ev.csv"
 
 emb_train=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\embeddings\train.csv"
 emb_test=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\embeddings\test.csv"
@@ -62,7 +62,7 @@ other_ev=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\other_feature
 
 # <h2>text preprocessing
 
-# In[ ]:
+# In[3]:
 
 
 stemmer = SnowballStemmer('spanish')
@@ -84,7 +84,7 @@ def clean_text(text):
 
 # <h2>data loading
 
-# In[ ]:
+# In[4]:
 
 
 #texts_train
@@ -118,7 +118,7 @@ texts_ev=df[1].tolist()
 #categories_train_row= pd.read_csv(texts_ov, sep=';', header=None, encoding = 'utf-8-sig')[0].tolist()
 
 
-# In[ ]:
+# In[5]:
 
 
 #lda
@@ -131,7 +131,7 @@ lda_values_ev= pd.read_csv(lda_ev, sep=';', header=None, encoding = 'utf-8-sig')
 lda_values_ev=lda_scaler.transform(lda_values_ev)
 
 
-# In[ ]:
+# In[6]:
 
 
 #embeddings
@@ -144,7 +144,7 @@ emb_values_ev= pd.read_csv(emb_ev, sep=';', header=None, encoding = 'utf-8-sig')
 emb_values_ev=emb_scaler.transform(emb_values_ev)
 
 
-# In[ ]:
+# In[6]:
 
 
 #emotions
@@ -157,7 +157,7 @@ em_values_ev= pd.read_csv(em_ev, sep=';', header=None, encoding = 'utf-8-sig').d
 em_values_ev=em_scaler.transform(em_values_ev)
 
 
-# In[ ]:
+# In[7]:
 
 
 #other
@@ -172,11 +172,11 @@ other_values_ev=other_scaler.transform(other_values_ev)
 
 # <h2>tfidf
 
-# In[ ]:
+# In[8]:
 
 
 sw_list=stopwords.words('spanish')
-vectorizer = TfidfVectorizer(max_features=5000)
+vectorizer = TfidfVectorizer(max_features=2000)
 
 for i in range(len(texts_train)):
     texts_train[i]=' '.join(clean_text(texts_train[i]))
@@ -193,7 +193,7 @@ tfidf_ev = vectorizer.transform(texts_ev).toarray()
 
 # <h2> embedding matrix
 
-# In[ ]:
+# In[9]:
 
 
 words=set()#set of all words
@@ -209,7 +209,7 @@ for text in texts_ev:
 print("number of words: {0}".format(len(words)))
 
 
-# In[ ]:
+# In[10]:
 
 
 embdict=dict()
@@ -234,7 +234,7 @@ print("size of dictionary: {0}".format(len(embdict)))
 del(words)
 
 
-# In[ ]:
+# In[11]:
 
 
 MAX_NB_WORDS = 50000
@@ -242,7 +242,7 @@ MAX_SEQUENCE_LENGTH = 250
 EMBEDDING_DIM = 300
 
 
-# In[ ]:
+# In[12]:
 
 
 tokenizer=Tokenizer()
@@ -252,7 +252,7 @@ word_index = tokenizer.word_index
 print('Found %s unique tokens.' % len(word_index))
 
 
-# In[ ]:
+# In[13]:
 
 
 embedding_matrix = np.zeros((len(word_index), EMBEDDING_DIM))
@@ -267,7 +267,7 @@ for word, i in tokenizer.word_index.items():
 del(embdict)
 
 
-# In[ ]:
+# In[14]:
 
 
 texts_train = tokenizer.texts_to_sequences(texts_train)
@@ -283,7 +283,7 @@ print('Shape of data tensor:', texts_ev.shape)
 
 # <h2>model
 
-# In[ ]:
+# In[15]:
 
 
 num_classes=2
@@ -291,7 +291,7 @@ categories_train = tf.keras.utils.to_categorical(categories_train_raw, num_class
 categories_test = tf.keras.utils.to_categorical(categories_test_raw, num_classes)
 
 
-# In[ ]:
+# In[16]:
 
 
 def f1(y_true, y_pred):
@@ -311,14 +311,14 @@ def f1(y_true, y_pred):
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 
-# In[ ]:
+# In[18]:
 
 
-input_cnn=Input(shape=(MAX_SEQUENCE_LENGTH,))
-input_tfidf=Input(shape=(len(tfidf_train[0]),))
-input_em=Input(shape=(len(em_train[0]),))
-input_lda=Input(shape=(len(lda_train[0]),))
-input_other=Input(shape=(len(other_train[0]),))
+input_cnn=Input(shape=(MAX_SEQUENCE_LENGTH,),name='input_cnn')
+input_tfidf=Input(shape=(len(tfidf_train[0]),),name='input_tfidf')
+input_em=Input(shape=(len(em_values_train[0]),),name='input_em')
+input_lda=Input(shape=(len(lda_values_train[0]),),name='input_lda')
+input_other=Input(shape=(len(other_values_train[0]),),name='input_other')
 
 #cnn
 x = Embedding(29531, 300, input_length=250, trainable=True, name='300')(input_cnn)
@@ -352,14 +352,14 @@ y3 = Dense(8, activation='relu')(y3)
 #y3 = Dropout(0.1)(y3)
 y3 = Model(inputs=input_lda, outputs=y3)#8
 
-combined=concatenate([x.output, y.output, y2.output, input_other], name='concat')#216
+combined=concatenate([x.output, y.output, y2.output, y3.output, input_other], name='concat')#216
 z=Dense(128, activation='relu', name='128')(combined)
 #z = Dropout(0.1)(z)
 z=Dense(64, activation='relu')(z)
 z = Dropout(0.8)(z)
 z=Dense(2, activation='softmax', name='2')(z)
 
-model = tensorflow.keras.models.Model(inputs=[input_cnn, input_tfidf, input_em, input_other], outputs=z)
+model = tensorflow.keras.models.Model(inputs=[input_cnn, input_tfidf, input_em, input_lda, input_other], outputs=z)
 
 model.compile(loss='binary_crossentropy',
                   optimizer='adam',
@@ -369,32 +369,22 @@ model.compile(loss='binary_crossentropy',
 model.summary()
 
 
-# In[ ]:
+# In[19]:
 
 
-model.fit([texts_train, np.array(tfidf_train), np.array(emb_values_train), np.array(em_values_train), np.array(lda_values_train), np.array(other_values_train)],
+model.fit([texts_train, np.array(tfidf_train), np.array(em_values_train), np.array(lda_values_train), np.array(other_values_train)],
           categories_train, epochs=1, 
           verbose=1, 
-          validation_data=([texts_test, np.array(tfidf_test), np.array(emb_values_test), np.array(em_values_test), np.array(lda_values_test), np.array(other_values_test)], categories_test)
+          validation_data=([texts_test, np.array(tfidf_test), np.array(em_values_test), np.array(lda_values_test), np.array(other_values_test)], categories_test)
          )
 
 
-# In[ ]:
+# In[20]:
 
 
-predict = np.argmax(model.predict([np.array(texts_test),np.array(values2), np.array(tfidf_test)]), axis=1)
+predict = np.argmax(model.predict([texts_test, np.array(tfidf_test), np.array(em_values_test), np.array(lda_values_test), np.array(other_values_test)]), axis=1)
 answer = np.argmax(categories_test, axis=1)
 print('F1-score: %f' % (f1_score(predict, answer, average="macro")*100))
-
-
-# In[ ]:
-
-
-predict = np.argmax(model.predict([np.array(texts_ev),np.array(values3),np.array(tfidf_ev)]), axis=1)
-print(predict)
-with open('prediction_cnn1.txt', 'w', encoding='utf-8') as file:
-    for p in predict:
-        print(str(p),file=file)
 
 
 # In[ ]:
