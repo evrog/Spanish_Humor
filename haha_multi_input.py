@@ -39,25 +39,21 @@ from nltk.tokenize import word_tokenize
 import pandas as pd
 from nltk.stem import SnowballStemmer
 
-word2vec = r"C:\Users\Annie\Documents\Working\Spanish jokes\SBW-vectors-300-min5.txt"
-train=r"C:\Users\Annie\Documents\Working\Spanish jokes\data\haha_2019_train_preprocessed_lemmatized.csv"
-test=r"C:\Users\Annie\Documents\Working\Spanish jokes\data\haha_2019_test_preprocessed_lemmatized.csv"
+word2vec = r"SBW-vectors-300-min5.txt"
+train=r"haha_2019_train_preprocessed_lemmatized.csv"
+test=r"haha_2019_test_preprocessed_lemmatized.csv"
 
-lda_train=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\lda\train.csv"
-lda_test=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\lda\test.csv"
-lda_ev=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\lda\ev.csv"
+lda_train=r"lda_train.csv"
+lda_test=r"lda_test.csv"
+lda_ev=r"lda_ev.csv"
 
-emb_train=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\embeddings\train.csv"
-emb_test=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\embeddings\test.csv"
-emb_ev=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\embeddings\ev.csv"
+em_train=r"emotions_train.csv"
+em_test=r"emotions_test.csv"
+em_ev=r"emotions_ev.csv"
 
-em_train=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\emotions\train.csv"
-em_test=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\emotions\test.csv"
-em_ev=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\emotions\ev.csv"
-
-other_train=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\other_features\train.csv"
-other_test=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\other_features\test.csv"
-other_ev=r"C:\Users\Annie\Documents\Working\Spanish jokes\ALL_DATA\other_features\ev.csv"
+other_train=r"other_train.csv"
+other_test=r"other_test.csv"
+other_ev=r"other_ev.csv"
 
 
 # <h2>text preprocessing
@@ -114,8 +110,6 @@ categories_test_raw = [1 if str(s)!='nan' else 0 for s in scores_test]
 
 df=pd.read_csv(test, sep=',', header=None, encoding = 'utf-8-sig')
 texts_ev=df[1].tolist()
-#texts_train= pd.read_csv(texts_ov, sep=';', header=None, encoding = 'utf-8-sig')[0].tolist()
-#categories_train_row= pd.read_csv(texts_ov, sep=';', header=None, encoding = 'utf-8-sig')[0].tolist()
 
 
 # In[5]:
