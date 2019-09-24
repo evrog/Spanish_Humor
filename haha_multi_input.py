@@ -125,20 +125,7 @@ lda_values_ev= pd.read_csv(lda_ev, sep=';', header=None, encoding = 'utf-8-sig')
 lda_values_ev=lda_scaler.transform(lda_values_ev)
 
 
-# In[6]:
-
-
-#embeddings
-emb_scaler = MinMaxScaler()
-emb_values_train= pd.read_csv(emb_train, sep=';', header=None, encoding = 'utf-8-sig').drop([0,1], axis=1).values
-emb_values_train=emb_scaler.fit_transform(emb_values_train)
-emb_values_test= pd.read_csv(emb_test, sep=';', header=None, encoding = 'utf-8-sig').drop([0,1], axis=1).values
-emb_values_test=emb_scaler.transform(emb_values_test)
-emb_values_ev= pd.read_csv(emb_ev, sep=';', header=None, encoding = 'utf-8-sig').drop([0,1], axis=1).values
-emb_values_ev=emb_scaler.transform(emb_values_ev)
-
-
-# In[6]:
+# In[7]:
 
 
 #emotions
@@ -151,7 +138,7 @@ em_values_ev= pd.read_csv(em_ev, sep=';', header=None, encoding = 'utf-8-sig').d
 em_values_ev=em_scaler.transform(em_values_ev)
 
 
-# In[7]:
+# In[8]:
 
 
 #other
@@ -166,7 +153,7 @@ other_values_ev=other_scaler.transform(other_values_ev)
 
 # <h2>tfidf
 
-# In[8]:
+# In[9]:
 
 
 sw_list=stopwords.words('spanish')
@@ -187,7 +174,7 @@ tfidf_ev = vectorizer.transform(texts_ev).toarray()
 
 # <h2> embedding matrix
 
-# In[9]:
+# In[ ]:
 
 
 words=set()#set of all words
@@ -203,7 +190,7 @@ for text in texts_ev:
 print("number of words: {0}".format(len(words)))
 
 
-# In[10]:
+# In[ ]:
 
 
 embdict=dict()
@@ -228,7 +215,7 @@ print("size of dictionary: {0}".format(len(embdict)))
 del(words)
 
 
-# In[11]:
+# In[ ]:
 
 
 MAX_NB_WORDS = 50000
@@ -236,7 +223,7 @@ MAX_SEQUENCE_LENGTH = 250
 EMBEDDING_DIM = 300
 
 
-# In[12]:
+# In[ ]:
 
 
 tokenizer=Tokenizer()
@@ -246,7 +233,7 @@ word_index = tokenizer.word_index
 print('Found %s unique tokens.' % len(word_index))
 
 
-# In[13]:
+# In[ ]:
 
 
 embedding_matrix = np.zeros((len(word_index), EMBEDDING_DIM))
@@ -261,7 +248,7 @@ for word, i in tokenizer.word_index.items():
 del(embdict)
 
 
-# In[14]:
+# In[ ]:
 
 
 texts_train = tokenizer.texts_to_sequences(texts_train)
@@ -277,7 +264,7 @@ print('Shape of data tensor:', texts_ev.shape)
 
 # <h2>model
 
-# In[15]:
+# In[ ]:
 
 
 num_classes=2
@@ -285,7 +272,7 @@ categories_train = tf.keras.utils.to_categorical(categories_train_raw, num_class
 categories_test = tf.keras.utils.to_categorical(categories_test_raw, num_classes)
 
 
-# In[16]:
+# In[ ]:
 
 
 def f1(y_true, y_pred):
@@ -305,7 +292,7 @@ def f1(y_true, y_pred):
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 
-# In[18]:
+# In[ ]:
 
 
 input_cnn=Input(shape=(MAX_SEQUENCE_LENGTH,),name='input_cnn')
@@ -363,7 +350,7 @@ model.compile(loss='binary_crossentropy',
 model.summary()
 
 
-# In[19]:
+# In[ ]:
 
 
 model.fit([texts_train, np.array(tfidf_train), np.array(em_values_train), np.array(lda_values_train), np.array(other_values_train)],
@@ -373,7 +360,7 @@ model.fit([texts_train, np.array(tfidf_train), np.array(em_values_train), np.arr
          )
 
 
-# In[20]:
+# In[ ]:
 
 
 predict = np.argmax(model.predict([texts_test, np.array(tfidf_test), np.array(em_values_test), np.array(lda_values_test), np.array(other_values_test)]), axis=1)
